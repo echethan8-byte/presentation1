@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dynamic Programming — Interactive Preview</title>
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#9aa6bf; --accent:#7dd3fc; --accent-2:#60a5fa; --glass: rgba(255,255,255,0.04);
+      --card-radius:16px; --pad:18px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:linear-gradient(180deg,#071126 0%, #081428 100%); color:#e6eef8; -webkit-font-smoothing:antialiased; padding:28px;
+    }
+
+    .container{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
+
+    header{grid-column:1/-1;display:flex;align-items:center;gap:16px;margin-bottom:6px}
+    .logo{width:68px;height:68px;background:linear-gradient(135deg,var(--accent),var(--accent-2));border-radius:12px;display:flex;align-items:center;justify-content:center;color:#04263b;font-weight:700;font-size:20px}
+    h1{margin:0;font-size:22px}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    main{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); padding:var(--pad); border-radius:var(--card-radius); box-shadow: 0 6px 30px rgba(2,6,23,0.6)}
+    aside{background:var(--card); padding:16px; border-radius:12px; position:sticky; top:28px; height:max-content}
+
+    section{margin-bottom:20px}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--glass);color:var(--accent);font-weight:600;font-size:12px}
+    h2{font-size:18px;margin:6px 0 8px}
+    h3{font-size:15px;margin:8px 0;color:#dceeff}
+    .muted{color:var(--muted);font-size:13px}
+
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+    pre{background:rgba(0,0,0,0.35);padding:12px;border-radius:10px;overflow:auto;color:#e6eef8}
+    code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;font-size:13px}
+
+    .flowchart{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); padding:12px;border-radius:10px}
+
+    table.dp{width:100%;border-collapse:collapse;margin-top:8px}
+    table.dp td, table.dp th{border:1px solid rgba(255,255,255,0.06);padding:8px;text-align:center;font-size:13px}
+    table.dp th{background:rgba(255,255,255,0.02);color:var(--accent)}
+
+    .btn{display:inline-block;padding:8px 12px;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#04263b;font-weight:700;text-decoration:none}
+
+    footer{grid-column:1/-1;color:var(--muted);font-size:13px;margin-top:8px}
+
+    /* Responsive */
+    @media (max-width:980px){.container{grid-template-columns:1fr} aside{position:static}}
+
+    /* small helpers */
+    .note{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;color:var(--muted);font-size:13px}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">DP</div>
+      <div>
+        <h1>Dynamic Programming — Quick Reference & Examples</h1>
+        <p class="lead">Definition, flowcharts, diagrams and runnable code examples for teaching and exam-prep.</p>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <span class="badge">Definition</span>
+        <h2>What is Dynamic Programming?</h2>
+        <p class="muted">Dynamic Programming (DP) is a technique to solve problems by dividing them into overlapping subproblems, storing results, and building the final solution from those saved results. Use DP when the problem has <strong>overlapping subproblems</strong> and <strong>optimal substructure</strong>.</p>
+      </section>
+
+      <section class="grid-2">
+        <div>
+          <h3>Key Concepts</h3>
+          <ul class="muted">
+            <li><strong>Optimal substructure:</strong> an optimal solution contains optimal solutions to subproblems.</li>
+            <li><strong>Overlapping subproblems:</strong> same subproblems solved multiple times.</li>
+            <li><strong>Memoization (top-down):</strong> recursion + cache.</li>
+            <li><strong>Tabulation (bottom-up):</strong> iterative DP table filling.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Common Problems</h3>
+          <p class="muted">Fibonacci, Longest Common Subsequence (LCS), 0/1 Knapsack, Coin Change, Edit Distance, Matrix Chain Multiplication.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2>Example 1 — Fibonacci (Bottom-Up)</h2>
+        <div class="flowchart">
+          <!-- simple SVG flowchart -->
+          <svg width="100%" height="160" viewBox="0 0 800 160" preserveAspectRatio="xMinYMin">
+            <defs>
+              <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                <path d="M0,0 L8,4 L0,8 z" fill="#7dd3fc" />
+              </marker>
+            </defs>
+            <rect x="10" y="10" rx="8" ry="8" width="140" height="40" fill="#071830" stroke="#7dd3fc" />
+            <text x="20" y="35" fill="#9fd8f6" font-size="12">Start — input n</text>
+
+            <rect x="180" y="10" rx="8" ry="8" width="160" height="40" fill="#071830" stroke="#7dd3fc" />
+            <text x="190" y="35" fill="#9fd8f6" font-size="12">if n &lt;= 1 return n</text>
+
+            <rect x="420" y="10" rx="8" ry="8" width="200" height="40" fill="#071830" stroke="#7dd3fc" />
+            <text x="430" y="33" fill="#9fd8f6" font-size="12">init dp[0]=0, dp[1]=1</text>
+
+            <rect x="10" y="80" rx="8" ry="8" width="420" height="40" fill="#071830" stroke="#7dd3fc" />
+            <text x="20" y="105" fill="#9fd8f6" font-size="12">for i=2..n: dp[i]=dp[i-1]+dp[i-2]</text>
+
+            <rect x="460" y="80" rx="8" ry="8" width="160" height="40" fill="#071830" stroke="#7dd3fc" />
+            <text x="470" y="105" fill="#9fd8f6" font-size="12">print dp[n]</text>
+
+            <!-- arrows -->
+            <line x1="150" y1="30" x2="180" y2="30" stroke="#7dd3fc" stroke-width="2" marker-end="url(#arrow)" />
+            <line x1="340" y1="30" x2="420" y2="30" stroke="#7dd3fc" stroke-width="2" marker-end="url(#arrow)" />
+            <line x1="520" y1="50" x2="520" y2="80" stroke="#7dd3fc" stroke-width="2" marker-end="url(#arrow)" />
+            <line x1="430" y1="100" x2="460" y2="100" stroke="#7dd3fc" stroke-width="2" marker-end="url(#arrow)" />
+          </svg>
+        </div>
+
+        <h3>Fibonacci — Tabulation Table (Example n=6)</h3>
+        <table class="dp">
+          <tr><th>i</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th></tr>
+          <tr><th>fib[i]</th><td>0</td><td>1</td><td>1</td><td>2</td><td>3</td><td>5</td><td>8</td></tr>
+        </table>
+
+        <h3>Code (Python)</h3>
+        <pre><code>def fib(n):
+    dp = [0] * (n+1)
+    dp[0] = 0
+    dp[1] = 1
+    for i in range(2, n+1):
+        dp[i] = dp[i-1] + dp[i-2]
+    return dp[n]
+
+print(fib(6))  # 8</code></pre>
+      </section>
+
+      <section>
+        <h2>Example 2 — Longest Common Subsequence (LCS)</h2>
+        <p class="muted">LCS builds a 2D table dp[m+1][n+1]. If characters match, dp[i][j]=dp[i-1][j-1]+1 else max(dp[i-1][j], dp[i][j-1]).</p>
+
+        <div class="flowchart">
+          <!-- tiny LCS SVG hint -->
+          <svg width="100%" height="140" viewBox="0 0 700 140" preserveAspectRatio="xMinYMin">
+            <rect x="10" y="12" rx="8" ry="8" width="170" height="36" fill="#071830" stroke="#60a5fa" />
+            <text x="18" y="36" fill="#bfe9ff" font-size="12">Input strings X and Y</text>
+            <rect x="210" y="12" rx="8" ry="8" width="240" height="36" fill="#071830" stroke="#60a5fa" />
+            <text x="220" y="36" fill="#bfe9ff" font-size="12">Create dp table (m+1 x n+1) init 0</text>
+            <rect x="470" y="12" rx="8" ry="8" width="200" height="36" fill="#071830" stroke="#60a5fa" />
+            <text x="480" y="36" fill="#bfe9ff" font-size="12">Fill table row-wise using recurrence</text>
+
+            <line x1="180" y1="30" x2="210" y2="30" stroke="#7dd3fc" stroke-width="2" marker-end="url(#arrow)" />
+            <line x1="450" y1="30" x2="470" y2="30" stroke="#7dd3fc" stroke-width="2" marker-end="url(#arrow)" />
+          </svg>
+        </div>
+
+        <h3>Example DP table (X="ABCBDAB", Y="BDCAB") — final value = 4</h3>
+        <table class="dp">
+          <tr><th></th><th></th><th>B</th><th>D</th><th>C</th><th>A</th><th>B</th></tr>
+          <tr><th></th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><th>A</th><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>
+          <tr><th>B</th><td>0</td><td>1</td><td>1</td><td>1</td><td>1</td><td>2</td></tr>
+          <tr><th>C</th><td>0</td><td>1</td><td>1</td><td>2</td><td>2</td><td>2</td></tr>
+          <tr><th>B</th><td>0</td><td>1</td><td>1</td><td>2</td><td>2</td><td>3</td></tr>
+          <tr><th>D</th><td>0</td><td>1</td><td>2</td><td>2</td><td>2</td><td>3</td></tr>
+          <tr><th>A</th><td>0</td><td>1</td><td>2</td><td>2</td><td>3</td><td>3</td></tr>
+          <tr><th>B</th><td>0</td><td>1</td><td>2</td><td>2</td><td>3</td><td>4</td></tr>
+        </table>
+
+      </section>
+
+      <section>
+        <h2>Example 3 — 0/1 Knapsack (DP Table)</h2>
+        <p class="muted">Classic 2D DP with items on rows and capacities on columns. Use dp[i][w] = max(dp[i-1][w], value[i] + dp[i-1][w-weight[i]]) when weight fits.</p>
+
+        <table class="dp">
+          <tr><th>Item/Cap</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr>
+          <tr><th>0</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+          <tr><th>1 (w=1,v=10)</th><td>0</td><td>10</td><td>10</td><td>10</td><td>10</td><td>10</td><td>10</td><td>10</td></tr>
+          <tr><th>2 (w=3,v=40)</th><td>0</td><td>10</td><td>10</td><td>40</td><td>50</td><td>50</td><td>50</td><td>50</td></tr>
+          <tr><th>3 (w=4,v=50)</th><td>0</td><td>10</td><td>10</td><td>40</td><td>50</td><td>60</td><td>60</td><td>90</td></tr>
+          <tr><th>4 (w=5,v=70)</th><td>0</td><td>10</td><td>10</td><td>40</td><td>50</td><td>70</td><td>80</td><td>90</td></tr>
+        </table>
+
+      </section>
+
+      <section>
+        <h2>Quick Tips for Exams</h2>
+        <ul class="muted">
+          <li>Draw the DP table for small inputs — it makes reasoning easy.</li>
+          <li>State recurrence clearly before coding.</li>
+          <li>Indicate base cases (dp[0]...) on your flowchart.</li>
+          <li>Mention time (usually O(n * W) or similar) and space — and offer space optimization when possible.</li>
+        </ul>
+      </section>
+
+    </main>
+
+    <aside>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div>
+          <strong>Preview</strong>
+          <div class="muted" style="font-size:12px">Interactive single-file HTML/CSS</div>
+        </div>
+        <a class="btn" href="#preview" onclick="document.getElementById('preview').scrollIntoView({behavior:'smooth'});return false;">Open</a>
+      </div>
+
+      <div class="note">
+        Use this panel to quickly navigate the preview. If you want downloadable files or a dark/light toggle, tell me and I'll update the file.
+      </div>
+
+      <h3 style="margin-top:12px">Code Snippets</h3>
+      <pre><code>// fib (bottom-up)
+function fib(n){
+  const dp = [0,1];
+  for(let i=2;i<=n;i++) dp[i]=dp[i-1]+dp[i-2];
+  return dp[n];
+}
+</code></pre>
+
+      <h3 style="margin-top:12px">Export</h3>
+      <p class="muted">If you want, I can export this as a downloadable HTML file or convert it to PDF/PowerPoint.</p>
+    </aside>
+
+    <footer>
+      Need changes? Tell me which section to edit (flowchart, code, color, or add more examples) and I'll update it.
+    </footer>
+  </div>
+
+  <!-- invisible preview anchor -->
+  <div id="preview" style="display:none"></div>
+</body>
+</html>
